@@ -1,12 +1,14 @@
 using UnityEngine;
 
+
+//генерировать сетку элементов и спавнить ряды тайлов
 public class TileGeneration : MonoBehaviour
 {
-    [SerializeField] private GameObject[] _tilePrefab;
-    [SerializeField] private GameObject _slotPrefab;
+    [SerializeField] private Tile[] _tilePrefab;
+    [SerializeField] private Slot _slotPrefab;
     [SerializeField] private GameObject _board;
 
-    public GameObject[,] BoardSize = new GameObject[5, 5];
+    public Slot[,] BoardSize = new Slot[5, 5]; //передать в тайл.цс
 
     private int randomIndex;
 
@@ -45,20 +47,18 @@ public class TileGeneration : MonoBehaviour
 
         spawnPosition = new Vector2(0, spawnPositionY);
 
-        for (int i = 0; i < 1; i++)
+        for (int j = 0; j < BoardSize.GetLength(1); j++)
         {
-            for (int j = 0; j < BoardSize.GetLength(1); j++)
-            {
-                randomIndex = Random.Range(0, _tilePrefab.Length);
+            randomIndex = Random.Range(0, _tilePrefab.Length);
 
-                Instantiate(_tilePrefab[randomIndex], spawnPosition, Quaternion.identity, BoardSize[i, j].transform);
+            Instantiate(_tilePrefab[randomIndex], spawnPosition, Quaternion.identity, BoardSize[0, j].transform);
 
-                spawnPosition.x += 1.6f;
-            }
-            spawnPositionY -= 1.6f;
-
-            spawnPosition = new Vector2(0f, spawnPositionY);
+            spawnPosition.x += 1.6f;
         }
+        spawnPositionY -= 1.6f;
+
+        spawnPosition = new Vector2(0f, spawnPositionY);
+
     }
 
     [ContextMenu("desintegrate board")]
@@ -72,18 +72,4 @@ public class TileGeneration : MonoBehaviour
             }
         }
     }
-
-    /*
-    private void GenerationBombs()
-    {
-        for (int i = 0; i < boardSize.GetLength(0); i++)
-        {
-            for (int j = 0; j < boardSize.GetLength(1); j++)
-            {
-                randomIndex = Random.Range(0, _tilePrefab.Length);
-                Instantiate(_tilePrefab[randomIndex], boardSize[i, j].transform.position, Quaternion.identity, boardSize[i, j].transform);
-            }
-        }
-    } 
-    */
 }

@@ -1,8 +1,9 @@
 using UnityEngine;
 
+//проверка есть ли в слоте тайл, если есть, передать это в гейм менеджер
 public class Slot : MonoBehaviour
 {
-    public GameObject tile;
+    public Tile tile;
 
     private void Update()
     {
@@ -11,15 +12,16 @@ public class Slot : MonoBehaviour
 
     private void TileDetection()
     {
+
         if (transform.childCount > 0)
         {
-            tile = transform.GetChild(0).gameObject;
-            Debug.Log(tile.name);
+            Transform childTransform = transform.GetChild(0);
+
+            tile = childTransform.GetComponent<Tile>();
         }
         else
         {
-            Debug.Log(tile.name);
             tile = null;
-        }
+        }        
     }
 }

@@ -1,12 +1,14 @@
-using System.Collections;
 using UnityEngine;
 
+
+
+//перемещать челов имея два значения от слота и тайла
 public class GameManager : MonoBehaviour
 {
 
     public TileGeneration TileGenerator;
     private bool _checkable;
-    private Slot slot;
+    [SerializeField] private Slot slot;
 
     private void Start()
     {
@@ -14,7 +16,7 @@ public class GameManager : MonoBehaviour
         TileGenerator.GenerateOneRow();
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         GridFill();
     }
@@ -27,10 +29,10 @@ public class GameManager : MonoBehaviour
         {
             for (int j = 0; j < TileGenerator.BoardSize.GetLength(1); j++)
             {
-                GameObject currentCell = TileGenerator.BoardSize[i, j];
-                GameObject cellBelow = TileGenerator.BoardSize[i + 1, j];
-
-                if (cellBelow.transform.childCount == 0)
+                Slot currentCell = TileGenerator.BoardSize[i, j];
+                Slot cellBelow = TileGenerator.BoardSize[i + 1, j];
+                //если у слота ниже поле тайл == нулл и под тайлом есть место - тайлы двигаются ниже
+                if (cellBelow.tile == null)
                 {
                     _checkable = true;
                     Transform child = currentCell.transform.GetChild(0);
