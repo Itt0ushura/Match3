@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
         Check();
     }
 
-    [ContextMenu("zalupa")]
+    [ContextMenu("test")]
     private void Check()
     {
         for (int i = 0; i < _tileGenerator.boardSize.GetLength(0); i++)
