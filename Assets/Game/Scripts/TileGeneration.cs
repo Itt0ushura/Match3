@@ -6,7 +6,7 @@ public class TileGeneration : MonoBehaviour
     [SerializeField] private GameObject _slotPrefab;
     [SerializeField] private GameObject _board;
 
-    public GameObject[,] boardSize = new GameObject[5, 5];
+    public GameObject[,] BoardSize = new GameObject[5, 5];
 
     private int randomIndex;
 
@@ -20,14 +20,14 @@ public class TileGeneration : MonoBehaviour
 
         spawnPosition = new Vector2(0, spawnPositionY);
 
-        for (int i = 0; i < boardSize.GetLength(0); i++)
+        for (int i = 0; i < BoardSize.GetLength(0); i++)
         {
-            for (int j = 0; j < boardSize.GetLength(1); j++)
+            for (int j = 0; j < BoardSize.GetLength(1); j++)
             {
 
                 randomIndex = Random.Range(0, _tilePrefab.Length);
 
-                boardSize[i, j] = Instantiate(_slotPrefab, spawnPosition, Quaternion.identity, _board.transform);
+                BoardSize[i, j] = Instantiate(_slotPrefab, spawnPosition, Quaternion.identity, _board.transform);
 
                 spawnPosition.x += 1.6f;
             }
@@ -47,11 +47,11 @@ public class TileGeneration : MonoBehaviour
 
         for (int i = 0; i < 1; i++)
         {
-            for (int j = 0; j < boardSize.GetLength(1); j++)
+            for (int j = 0; j < BoardSize.GetLength(1); j++)
             {
                 randomIndex = Random.Range(0, _tilePrefab.Length);
 
-                Instantiate(_tilePrefab[randomIndex], spawnPosition, Quaternion.identity, boardSize[i, j].transform);
+                Instantiate(_tilePrefab[randomIndex], spawnPosition, Quaternion.identity, BoardSize[i, j].transform);
 
                 spawnPosition.x += 1.6f;
             }
@@ -64,11 +64,11 @@ public class TileGeneration : MonoBehaviour
     [ContextMenu("desintegrate board")]
     private void DestroyBoard()
     {
-        for (int i = 0; i < boardSize.GetLength(0); i++)
+        for (int i = 0; i < BoardSize.GetLength(0); i++)
         {
-            for (int j = 0; j < boardSize.GetLength(1); j++)
+            for (int j = 0; j < BoardSize.GetLength(1); j++)
             {
-                DestroyImmediate(boardSize[i, j]);
+                DestroyImmediate(BoardSize[i, j]);
             }
         }
     }

@@ -1,18 +1,20 @@
+using System.Collections;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
 
-    public TileGeneration _tileGenerator;
-    public Slot slot;
+    public TileGeneration TileGenerator;
+    private bool _checkable;
+    private Slot slot;
 
     private void Start()
     {
-        _tileGenerator.GenerateBoard();
-        _tileGenerator.GenerateOneRow();
+        TileGenerator.GenerateBoard();
+        TileGenerator.GenerateOneRow();
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         Check();
     }
@@ -20,19 +22,26 @@ public class GameManager : MonoBehaviour
     [ContextMenu("test")]
     private void Check()
     {
-        for (int i = 0; i < _tileGenerator.boardSize.GetLength(0); i++)
+        _checkable = false;
+        for (int i = 0; i < TileGenerator.BoardSize.GetLength(0) - 1; i++)
         {
-            for (int j = 0; j < _tileGenerator.boardSize.GetLength(1)-1; j++)
+            for (int j = 0; j < TileGenerator.BoardSize.GetLength(1); j++)
             {
-                Debug.Log("i am working");
-                if (_tileGenerator.boardSize[i, j+1].gameObject == slot)
+                GameObject currentCell = TileGenerator.BoardSize[i, j];
+                GameObject cellBelow = TileGenerator.BoardSize[i + 1, j];
+
+                if (cellBelow.transform.childCount == 0)
                 {
-                    if (slot.tile == null)
-                    {
-                        Debug.Log("empty boy " + _tileGenerator.boardSize[i,j]);
-                    }
+                    _checkable = true;
+                    Transform child = currentCell.transform.GetChild(0);
+                    child.SetParent(cellBelow.transform);
+                    child.transform.position = cellBelow.transform.position;
                 }
             }
+        }
+        if (_checkable)
+        {
+            TileGenerator.GenerateOneRow();
         }
     }
 }

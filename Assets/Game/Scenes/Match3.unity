@@ -188,8 +188,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 793102d63022f7b45b4bf8156aa93be6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _tileGenerator: {fileID: 355749817}
-  slot: {fileID: -3921661447625158333, guid: f83284ea1a8389a4e95209df4b4ebe3a, type: 3}
+  TileGenerator: {fileID: 355749817}
 --- !u!850595691 &416967508
 LightingSettings:
   m_ObjectHideFlags: 0
