@@ -16,11 +16,11 @@ public class GameManager : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Check();
+        GridFill();
     }
 
     [ContextMenu("test")]
-    private void Check()
+    private void GridFill()
     {
         _checkable = false;
         for (int i = 0; i < TileGenerator.BoardSize.GetLength(0) - 1; i++)
