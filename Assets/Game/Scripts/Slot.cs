@@ -22,6 +22,6 @@ public class Slot : MonoBehaviour
         else
         {
             tile = null;
-        }        
+        }
     }
 }

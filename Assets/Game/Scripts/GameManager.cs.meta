@@ -3,7 +3,9 @@ guid: 793102d63022f7b45b4bf8156aa93be6
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - TileGenerator: {instanceID: 0}
+  - slot: {fileID: -3921661447625158333, guid: f83284ea1a8389a4e95209df4b4ebe3a, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

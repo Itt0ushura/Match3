@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 
@@ -20,8 +21,7 @@ public class GameManager : MonoBehaviour
     {
         GridFill();
     }
-
-    [ContextMenu("test")]
+    //сделать анимированное падение фишек(хотя бы не такое дёрганное)
     private void GridFill()
     {
         _checkable = false;
@@ -31,13 +31,12 @@ public class GameManager : MonoBehaviour
             {
                 Slot currentCell = TileGenerator.BoardSize[i, j];
                 Slot cellBelow = TileGenerator.BoardSize[i + 1, j];
-                //если у слота ниже поле тайл == нулл и под тайлом есть место - тайлы двигаются ниже
                 if (cellBelow.tile == null)
                 {
                     _checkable = true;
                     Transform child = currentCell.transform.GetChild(0);
                     child.SetParent(cellBelow.transform);
-                    child.transform.position = cellBelow.transform.position;
+                    StartCoroutine(MoveTileDown(child.transform, cellBelow.transform.position, 0.5f));
                 }
             }
         }
@@ -45,5 +44,18 @@ public class GameManager : MonoBehaviour
         {
             TileGenerator.GenerateOneRow();
         }
+    }
+    private IEnumerator MoveTileDown(Transform tileTransform, Vector3 targetPosition, float duration)
+    {
+        float elapsedTime = 0f;
+        Vector3 initialPosition = tileTransform.position;
+
+        while (elapsedTime < duration)
+        {
+            tileTransform.position = Vector3.Lerp(initialPosition, targetPosition, elapsedTime / duration);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        tileTransform.position = targetPosition;
     }
 }

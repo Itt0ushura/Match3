@@ -1,7 +1,5 @@
 using UnityEngine;
 
-
-//генерировать сетку элементов и спавнить р€ды тайлов
 public class TileGeneration : MonoBehaviour
 {
     [SerializeField] private Tile[] _tilePrefab;
@@ -44,20 +42,23 @@ public class TileGeneration : MonoBehaviour
     {
 
         float spawnPositionY = 6.4f;
-
-        spawnPosition = new Vector2(0, spawnPositionY);
+        float spawnPositionX = 0f;
+        spawnPosition = new Vector2(spawnPositionX, spawnPositionY); //spawnPositionY
 
         for (int j = 0; j < BoardSize.GetLength(1); j++)
-        {
-            randomIndex = Random.Range(0, _tilePrefab.Length);
+        {//if €чейка пуста€, спавнить новые фишки(сделать дальше по прогрессу проекта)
+            if (_slotPrefab.tile == null)
+            {
+                randomIndex = Random.Range(0, _tilePrefab.Length);
 
-            Instantiate(_tilePrefab[randomIndex], spawnPosition, Quaternion.identity, BoardSize[0, j].transform);
+                Instantiate(_tilePrefab[randomIndex], spawnPosition, Quaternion.identity, BoardSize[0, j].transform);
 
-            spawnPosition.x += 1.6f;
+                spawnPositionX += 1.6f;
+            }
+            //spawnPositionY -= 1.6f;
+
+            spawnPosition = new Vector2(spawnPositionX, spawnPositionY);
         }
-        spawnPositionY -= 1.6f;
-
-        spawnPosition = new Vector2(0f, spawnPositionY);
 
     }
 
