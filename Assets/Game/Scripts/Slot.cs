@@ -1,27 +1,25 @@
 using UnityEngine;
-
-//проверка есть ли в слоте тайл, если есть, передать это в гейм менеджер
 public class Slot : MonoBehaviour
 {
-    public Tile tile;
+    public bool IsHasTile => Tile != null;
 
-    private void Update()
+    public Tile Tile { get; private set; }
+
+    public void Init(Tile tile)
     {
-        TileDetection();
+        tile.Init(this);
     }
 
-    private void TileDetection()
+    public void SetTile(Tile tile)
     {
+        tile.transform.SetParent(transform);
+        //tile.transform.localPosition = Vector3.zero;
+        StartCoroutine(tile.MoveTileDown(tile.transform, transform.position, 0.5f));
+        Tile = tile;
+    }
 
-        if (transform.childCount > 0)
-        {
-            Transform childTransform = transform.GetChild(0);
-
-            tile = childTransform.GetComponent<Tile>();
-        }
-        else
-        {
-            tile = null;
-        }
+    public void ClearTile()
+    {
+        Tile = null;
     }
 }

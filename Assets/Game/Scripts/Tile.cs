@@ -1,44 +1,40 @@
+using System.Collections;
 using UnityEngine;
 
-
-// Проверка есть ли под ним пустая ячейка, если да, сформировать истину и передать в гейм менеджер
 public class Tile : MonoBehaviour
 {
-    private TileGeneration TileGenerator;
+    public bool IsMovable;
+    private Slot _slot;
 
-
-    public bool isMovable; //придумать куда деть
-    private void Start()
+    public void Init(Slot slot)
     {
-        GameObject coreFinder = GameObject.Find("GameCore");
-        if (coreFinder != null)
-        {
-            TileGenerator = coreFinder.GetComponent<TileGeneration>();
-        }
+
+        this._slot = slot;
+
+    }
+    public void CheckBelow(Slot slotbelow)
+    {
+
+        IsMovable = !slotbelow.IsHasTile;
+
     }
 
-    private void Update()
-    {
-        CheckUnder();
-    }
-
-    private void CheckUnder()
+    public IEnumerator MoveTileDown(Transform tileTransform, Vector3 targetPosition, float duration)
     {
 
-        for (int i = 0; i < TileGenerator.BoardSize.GetLength(0) - 1; i++)
+        float elapsedTime = 0f;
+        Vector3 initialPosition = tileTransform.position;
+
+        while (elapsedTime < duration)
         {
-            for (int j = 0; j < TileGenerator.BoardSize.GetLength(1); j++)
-            {
-                Slot slotBelow = TileGenerator.BoardSize[i + 1, j];
-                if (slotBelow.tile == null)
-                {
-                    isMovable = true;
-                }
-                else
-                {
-                    isMovable = false;
-                }
-            }
+            tileTransform.position = Vector3.Lerp(initialPosition, targetPosition, elapsedTime / duration);
+
+            elapsedTime += Time.deltaTime;
+
+            yield return null;
         }
+
+        tileTransform.position = targetPosition;
+
     }
 }

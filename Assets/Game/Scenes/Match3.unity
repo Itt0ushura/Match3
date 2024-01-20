@@ -176,6 +176,8 @@ MonoBehaviour:
   - {fileID: 7334766158450987369, guid: f7fac924da2f03b4792374f9b9ad1a77, type: 3}
   _slotPrefab: {fileID: -3921661447625158333, guid: f83284ea1a8389a4e95209df4b4ebe3a, type: 3}
   _board: {fileID: 5898488902722474219}
+  spawnOffsetX: 0
+  _spawnOffsetY: 6.4
 --- !u!114 &355749818
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -189,7 +191,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TileGenerator: {fileID: 355749817}
-  slot: {fileID: -3921661447625158333, guid: f83284ea1a8389a4e95209df4b4ebe3a, type: 3}
 --- !u!850595691 &416967508
 LightingSettings:
   m_ObjectHideFlags: 0
