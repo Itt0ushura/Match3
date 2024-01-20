@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
 
         TileGenerator.GenerateBoard();
 
-        TileGenerator.GenerateOneRow();
+        TileGenerator.GenerateTile();
 
     }
 
@@ -25,13 +25,18 @@ public class GameManager : MonoBehaviour
 
     private void GridFill()
     {
-        bool checkable = false;
         for (int i = 0; i < TileGenerator.Board.GetLength(0) - 1; i++)
         {
             for (int j = 0; j < TileGenerator.Board.GetLength(1); j++)
             {
+
                 _slot = TileGenerator.Board[i, j];
                 _slotbelow = TileGenerator.Board[i + 1, j];
+
+                if (_slot.Tile == null)
+                {
+                    TileGenerator.GenerateTile();
+                }
 
                 _tile = _slot.GetComponentInChildren<Tile>();
 
@@ -39,19 +44,15 @@ public class GameManager : MonoBehaviour
 
                 _tile.CheckBelow(_slotbelow);
 
-                if(_slotbelow != null && _tile.IsMovable == true)
+                if (_slotbelow != null && _tile.IsMovable == true)
                 {
                     _slot.ClearTile();
 
                     _slotbelow.SetTile(_tile);
 
-                    checkable = true;
                 }
             }
         }
-        if (checkable)
-        {
-            TileGenerator.GenerateOneRow();
-        }
+        TileGenerator.GenerateTile();
     }
 }

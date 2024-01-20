@@ -34,7 +34,7 @@ public class TileGeneration : MonoBehaviour
     }
 
     [ContextMenu("gentest")]
-    public void GenerateOneRow()
+    public void GenerateTile()
     {
         int randomIndex;
         for (int j = 0; j < Board.GetLength(1); j++)
