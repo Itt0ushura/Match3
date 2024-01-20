@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
 
     }
 
-    private void Update()
+    private void LateUpdate()
     {
         GridFill();
     }
