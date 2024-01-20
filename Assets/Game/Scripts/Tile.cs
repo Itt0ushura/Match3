@@ -1,4 +1,5 @@
 using System.Collections;
+using UnityEditorInternal;
 using UnityEngine;
 
 public class Tile : MonoBehaviour
@@ -36,5 +37,6 @@ public class Tile : MonoBehaviour
 
         tileTransform.position = targetPosition;
 
+        yield break;
     }
 }

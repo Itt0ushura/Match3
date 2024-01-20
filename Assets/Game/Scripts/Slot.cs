@@ -2,7 +2,6 @@ using UnityEngine;
 public class Slot : MonoBehaviour
 {
     public bool IsHasTile => Tile != null;
-
     public Tile Tile { get; private set; }
 
     public void Init(Tile tile)
