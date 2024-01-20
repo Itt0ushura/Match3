@@ -14,7 +14,7 @@ public class Slot : MonoBehaviour
     {
         tile.transform.SetParent(transform);
         //tile.transform.localPosition = Vector3.zero;
-        StartCoroutine(tile.MoveTileDown(tile.transform, transform.position, 0.5f));
+        StartCoroutine(tile.MoveTileDown(tile.transform, transform.position, 0.6f));
         Tile = tile;
     }
 

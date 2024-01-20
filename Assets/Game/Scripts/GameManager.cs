@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     {
 
         TileGenerator.GenerateBoard();
+
         TileGenerator.GenerateOneRow();
 
     }
@@ -31,9 +32,11 @@ public class GameManager : MonoBehaviour
             {
                 _slot = TileGenerator.Board[i, j];
                 _slotbelow = TileGenerator.Board[i + 1, j];
+
                 _tile = _slot.GetComponentInChildren<Tile>();
 
                 _slot.Init(_tile);
+
                 _tile.CheckBelow(_slotbelow);
 
                 if(_slotbelow != null && _tile.IsMovable == true)

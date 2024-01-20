@@ -33,6 +33,7 @@ public class TileGeneration : MonoBehaviour
         }
     }
 
+    [ContextMenu("gentest")]
     public void GenerateOneRow()
     {
         int randomIndex;
