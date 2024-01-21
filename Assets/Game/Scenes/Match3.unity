@@ -190,7 +190,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 793102d63022f7b45b4bf8156aa93be6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TileGenerator: {fileID: 355749817}
+  animationTimer: 0.5
 --- !u!850595691 &416967508
 LightingSettings:
   m_ObjectHideFlags: 0

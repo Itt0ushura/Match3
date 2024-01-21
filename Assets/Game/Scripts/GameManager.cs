@@ -2,8 +2,9 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    [SerializeField, Tooltip("Speed of animated tile moving")] private float animationTimer;
 
-    public TileGeneration TileGenerator;
+    private TileGeneration _tileGenerator;
 
     private Tile _tile;
     private Slot _slot;
@@ -12,9 +13,8 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
 
-        TileGenerator.GenerateBoard();
-
-        TileGenerator.GenerateTile();
+        _tileGenerator = GetComponent<TileGeneration>();
+        _tileGenerator.GenerateBoard();
 
     }
 
@@ -25,34 +25,27 @@ public class GameManager : MonoBehaviour
 
     private void GridFill()
     {
-        for (int i = 0; i < TileGenerator.Board.GetLength(0) - 1; i++)
+        for (int i = 0; i < _tileGenerator.Board.GetLength(0) - 1; i++)
         {
-            for (int j = 0; j < TileGenerator.Board.GetLength(1); j++)
+            for (int j = 0; j < _tileGenerator.Board.GetLength(1); j++)
             {
 
-                _slot = TileGenerator.Board[i, j];
-                _slotbelow = TileGenerator.Board[i + 1, j];
+                _slot = _tileGenerator.Board[i, j];
+                _slotbelow = _tileGenerator.Board[i + 1, j];
 
-                if (_slot.Tile == null)
+                if (_slot.IsHasTile)
                 {
-                    TileGenerator.GenerateTile();
-                }
+                    _tile = _slot.Tile;
 
-                _tile = _slot.GetComponentInChildren<Tile>();
+                    if (_tile.IsCanMoveTo(_slotbelow))
+                    {
 
-                _slot.Init(_tile);
+                        StartCoroutine(_tile.MoveTileDown(_slotbelow, animationTimer));
 
-                _tile.CheckBelow(_slotbelow);
-
-                if (_slotbelow != null && _tile.IsMovable == true)
-                {
-                    _slot.ClearTile();
-
-                    _slotbelow.SetTile(_tile);
-
+                    }
                 }
             }
         }
-        TileGenerator.GenerateTile();
+        _tileGenerator.GenerateTile();
     }
 }

@@ -4,16 +4,10 @@ public class Slot : MonoBehaviour
     public bool IsHasTile => Tile != null;
     public Tile Tile { get; private set; }
 
-    public void Init(Tile tile)
-    {
-        tile.Init(this);
-    }
-
     public void SetTile(Tile tile)
     {
+        tile.Init(this);
         tile.transform.SetParent(transform);
-        //tile.transform.localPosition = Vector3.zero;
-        StartCoroutine(tile.MoveTileDown(tile.transform, transform.position, 0.5f));
         Tile = tile;
     }
 

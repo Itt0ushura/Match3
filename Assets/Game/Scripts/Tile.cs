@@ -1,42 +1,40 @@
 using System.Collections;
-using UnityEditorInternal;
 using UnityEngine;
 
 public class Tile : MonoBehaviour
 {
-    public bool IsMovable;
-    private Slot _slot;
+    private Slot _currentSlot;
 
     public void Init(Slot slot)
     {
 
-        this._slot = slot;
+        this._currentSlot = slot;
 
     }
-    public void CheckBelow(Slot slotbelow)
-    {
+    public bool IsCanMoveTo(Slot slot) => !slot.IsHasTile;
 
-        IsMovable = !slotbelow.IsHasTile;
-
-    }
-
-    public IEnumerator MoveTileDown(Transform tileTransform, Vector3 targetPosition, float duration)
+    public IEnumerator MoveTileDown(Slot targetSlot, float duration)
     {
 
         float elapsedTime = 0f;
-        Vector3 initialPosition = tileTransform.position;
+
+        Vector3 initialPosition = _currentSlot.transform.position;
 
         while (elapsedTime < duration)
         {
-            tileTransform.position = Vector3.Lerp(initialPosition, targetPosition, elapsedTime / duration);
+            this.transform.position = Vector3.Lerp(initialPosition, targetSlot.transform.position, elapsedTime / duration);
 
             elapsedTime += Time.deltaTime;
 
             yield return null;
         }
 
-        tileTransform.position = targetPosition;
+        this.transform.position = targetSlot.transform.position;
 
+        _currentSlot.ClearTile();
+        
+        targetSlot.SetTile(this);
+        
         yield break;
     }
 }
