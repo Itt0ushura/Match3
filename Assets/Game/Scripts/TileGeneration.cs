@@ -11,6 +11,8 @@ public class TileGeneration : MonoBehaviour
     private Vector2 _spawnOffset;
     [SerializeField,Tooltip("set start x coordinates for grid")] private float spawnOffsetX;
     [SerializeField, Tooltip("set start y coordinates for grid")] private float _spawnOffsetY;
+    [Space]
+    [SerializeField] private float _spawnNextAfterDelay;
 
 
     [ContextMenu("Generate Board")]
@@ -49,7 +51,7 @@ public class TileGeneration : MonoBehaviour
 
                 var tile = Instantiate(tilePrefab[randomIndex], slot.transform.position, Quaternion.identity);
 
-                slot.SetTile(tile);
+                slot.SetTile(tile, _spawnNextAfterDelay);
             
             }
         }

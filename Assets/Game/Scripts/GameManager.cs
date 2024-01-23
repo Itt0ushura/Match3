@@ -6,16 +6,12 @@ public class GameManager : MonoBehaviour
 
     private TileGeneration _tileGenerator;
 
-    private Tile _tile;
-    private Slot _slot;
-    private Slot _slotbelow;
-
     private void Start()
     {
-
         _tileGenerator = GetComponent<TileGeneration>();
         _tileGenerator.GenerateBoard();
-
+        _tileGenerator.GenerateTile();
+        GridFill();
     }
 
     private void LateUpdate()
@@ -30,22 +26,21 @@ public class GameManager : MonoBehaviour
             for (int j = 0; j < _tileGenerator.Board.GetLength(1); j++)
             {
 
-                _slot = _tileGenerator.Board[i, j];
-                _slotbelow = _tileGenerator.Board[i + 1, j];
+                var slot = _tileGenerator.Board[i, j];
+                var slotbelow = _tileGenerator.Board[i + 1, j];
 
-                if (_slot.IsHasTile)
+                if (slot.IsHasTile)
                 {
-                    _tile = _slot.Tile;
+                    var tile = slot.Tile;
 
-                    if (_tile.IsCanMoveTo(_slotbelow))
+                    if (tile.IsCanMoveTo(slotbelow))
                     {
-
-                        StartCoroutine(_tile.MoveTileDown(_slotbelow, animationTimer));
-
+                        StartCoroutine(tile.MoveTileDown(slotbelow, animationTimer));
                     }
                 }
             }
         }
+
         _tileGenerator.GenerateTile();
     }
 }

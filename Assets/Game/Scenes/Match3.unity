@@ -178,6 +178,7 @@ MonoBehaviour:
   board: {fileID: 5898488902722474219}
   spawnOffsetX: 0
   _spawnOffsetY: 6.4
+  _spawnNextAfterDelay: 0.6
 --- !u!114 &355749818
 MonoBehaviour:
   m_ObjectHideFlags: 0
