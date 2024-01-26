@@ -29,18 +29,26 @@ public class Tile : MonoBehaviour
 
         while (elapsedTime < duration)
         {
-            var lerpValue = elapsedTime / duration;
-            this.transform.position = Vector3.Lerp(initialPosition, targetSlot.transform.position, lerpValue);
-
-            if (!lastTileCleared && lerpValue >= _spawnNextDelay)
+            if (this != null)
             {
-                lastTileCleared = true;
-                lastTile.ClearTile();
+                var lerpValue = elapsedTime / duration;
+                this.transform.position = Vector3.Lerp(initialPosition, targetSlot.transform.position, lerpValue);
+
+                if (!lastTileCleared && lerpValue >= _spawnNextDelay)
+                {
+                    lastTileCleared = true;
+                    lastTile.ClearTile();
+                }
+
+                elapsedTime += Time.deltaTime;
+            }
+            else
+            {
+                yield break;
             }
 
-            elapsedTime += Time.deltaTime;
-
             yield return null;
+
         }
 
         this.transform.position = targetSlot.transform.position;

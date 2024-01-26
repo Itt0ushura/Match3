@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour
 
     private TileGeneration _tileGenerator;
 
+
     private void Start()
     {
         _tileGenerator = GetComponent<TileGeneration>();
@@ -40,7 +41,6 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
-
         _tileGenerator.GenerateTile();
     }
 }
