@@ -2,17 +2,26 @@ using System.Collections;
 using UnityEngine;
 
 public class Tile : MonoBehaviour
-{
+{   
     private Slot _currentSlot;
     private bool _isMoving;
     private float _spawnNextDelay;
+    [SerializeField] public TileColor _color;
+
+    public enum TileColor 
+    { 
+        Blue,
+        Green,
+        Orange,
+        Purple,
+        Red
+    };
 
     public void Init(Slot slot, float spawnNextAfterDelay)
     {
         this._currentSlot = slot;
         _spawnNextDelay = spawnNextAfterDelay;
     }
-
     public bool IsCanMoveTo(Slot slot) => !_isMoving && !slot.IsHasTile;
 
     public IEnumerator MoveTileDown(Slot targetSlot, float duration)

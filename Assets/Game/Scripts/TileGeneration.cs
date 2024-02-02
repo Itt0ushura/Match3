@@ -14,8 +14,6 @@ public class TileGeneration : MonoBehaviour
     [Space]
     [SerializeField] private float _spawnNextAfterDelay;
 
-
-    [ContextMenu("Generate Board")]
     public void GenerateBoard()
     {
         _spawnOffset = new Vector2(spawnOffsetX, _spawnOffsetY);
