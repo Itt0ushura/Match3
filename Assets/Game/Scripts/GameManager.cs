@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class GameManager : MonoBehaviour
 {
@@ -21,7 +23,6 @@ public class GameManager : MonoBehaviour
 
     private void LateUpdate()
     {
-        StopCoroutine(WaitandSearch());
         GridFill();
         StartCoroutine(WaitandSearch());
     }
@@ -49,72 +50,129 @@ public class GameManager : MonoBehaviour
         _tileGenerator.GenerateTile();
     }
 
-    private void SearchMethod(List<Tile> checkedTiles, List<Tile> deleteGroup)
+    //search realization
+
+    private void SearchMethod()
     {
-        
         for (int i = 0; i < _tileGenerator.Board.GetLength(0); i++)
         {
             for (int j = 0; j < _tileGenerator.Board.GetLength(1); j++)
             {
+
                 Tile tile = _tileGenerator.Board[i, j].Tile;
-                Tile tilebelow;
-                Tile tileabove;
-                if (checkedTiles.Contains(tile)) { continue; }
-
-                checkedTiles.Add(tile);
-
-                if (i + 1 < _tileGenerator.Board.GetLength(0))
+                if (_checkedTiles.Contains(tile))
                 {
-                    tilebelow = _tileGenerator.Board[i + 1, j].Tile;
+                    continue;
                 }
-                else
-                {
-                    tilebelow = null;
-                }
-
-                if (i - 1 < _tileGenerator.Board.GetLength(0))
-                {
-                    tileabove = _tileGenerator.Board[i - 1, j].Tile;
-                }
-                else
-                {
-                    tileabove = null;
-                }
-                
-                if (checkedTiles.Contains(tilebelow) == false)
-                {
-                    checkedTiles.Add(tilebelow);
-                }
-
-                if (checkedTiles.Contains(tileabove) == false)
-                {
-                    checkedTiles.Add(tileabove);
-                }
-
-                if (tile._color == tileabove._color && tile._color == tilebelow._color)
-                {
-                    deleteGroup.Add(tileabove);
-                    deleteGroup.Add(tile);
-                    deleteGroup.Add(tilebelow);
-                }
+                _checkedTiles.Add(tile);
+                Debug.Log("i'm center " + tile.name);
+                RecursiveSearch(i, j, tile);
             }
         }
-        StartCoroutine(WaitandSearch());
+    }
+    private void RecursiveSearch(int i, int j, Tile tile)
+    {
+        if (i + 1 < _tileGenerator.Board.GetLength(0))
+        {
+            Tile tilebelow = _tileGenerator.Board[i + 1, j].Tile;
+            if (!_checkedTiles.Contains(tilebelow))
+            {
+                _checkedTiles.Add(tilebelow);
+            }
+            if (tile._color == tilebelow._color)
+            {
+                if (!_deletionGroup.Contains(tilebelow))
+                {
+                    _deletionGroup.Add(tilebelow);
+                }
+                if (!_deletionGroup.Contains(tile))
+                {
+                    _deletionGroup.Add(tile);
+                }
+                Debug.Log("i'm down below " + tilebelow.name);
+            }
+        }
+        if (i - 1 >= 0)
+        {
+            Tile tileabove = _tileGenerator.Board[i - 1, j].Tile;
+            if (!_checkedTiles.Contains(tileabove))
+            {
+                _checkedTiles.Add(tileabove);
+            }
+            if (tile._color == tileabove._color)
+            {
+                if (!_deletionGroup.Contains(tileabove))
+                {
+                    _deletionGroup.Add(tileabove);
+                }
+                if (!_deletionGroup.Contains(tile))
+                {
+                    _deletionGroup.Add(tile);
+                }
+                Debug.Log("i'm above " + tileabove.name);
+            }
+        }
+        if (j + 1 < _tileGenerator.Board.GetLength(1))
+        {
+            Tile tileright = _tileGenerator.Board[i, j + 1].Tile;
+            if (!_checkedTiles.Contains(tileright))
+            {
+                _checkedTiles.Add(tileright);
+            }
+            if (tile._color == tileright._color)
+            {
+                if (!_deletionGroup.Contains(tileright))
+                {
+                    _deletionGroup.Add(tileright);
+                }
+                if (!_deletionGroup.Contains(tile))
+                {
+                    _deletionGroup.Add(tile);
+                }
+                Debug.Log("i'm to the right " + tileright.name);
+            }
+        }
+        if (j - 1 >= 0)
+        {
+            Tile tileleft = _tileGenerator.Board[i, j - 1].Tile;
+            if (!_checkedTiles.Contains(tileleft))
+            {
+                _checkedTiles.Add(tileleft);
+            }
+            if (tile._color == tileleft._color)
+            {
+                if (!_deletionGroup.Contains(tileleft))
+                {
+                    _deletionGroup.Add(tileleft);
+                }
+                if (!_deletionGroup.Contains(tile))
+                {
+                    _deletionGroup.Add(tile);
+                }
+                Debug.Log("i'm to the left " + tileleft.name);
+            }
+        }
     }
 
-    private void Delete(List<Tile> checkedTiles, List<Tile> deleteGroup)
+    private void Delete(List<Tile> list)
     {
-        foreach (var x in deleteGroup)
+        foreach (var x in list)
         {
-            Destroy(x.gameObject);
+            if (x.gameObject != null)
+            {
+                Destroy(x.gameObject);
+            }
+            else
+            {
+                list.Remove(x);
+            }
         }
-        deleteGroup.RemoveAll(item => item == null);
-        checkedTiles.RemoveAll(item => item == null);
+        list.Clear();
     }
+
     private IEnumerator WaitandSearch()
     {
         yield return new WaitForSeconds(5);
-        SearchMethod(_checkedTiles, _deletionGroup);
-        Delete(_checkedTiles, _deletionGroup);
+        SearchMethod();
     }
 }
