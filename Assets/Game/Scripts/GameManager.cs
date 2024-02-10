@@ -1,19 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
+using System.Linq;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class GameManager : MonoBehaviour
 {
     [SerializeField, Tooltip("Speed of animated tile moving")] private float animationTimer;
 
     private TileGeneration _tileGenerator;
-    private bool isDone; // for gridfill
 
     public List<Tile> _deletionGroup = new List<Tile>();
     public List<Tile> _checkedTiles = new List<Tile>();
-    List<Tile> _combinedList = new List<Tile>();
+    public List<Tile> _combinedList = new List<Tile>();
 
     private void Start()
     {
@@ -25,6 +23,7 @@ public class GameManager : MonoBehaviour
     {
         GridFill();
         StartCoroutine(WaitandSearch());
+        StartCoroutine(WaitandDelete());
     }
 
     private void GridFill()
@@ -60,105 +59,69 @@ public class GameManager : MonoBehaviour
             {
 
                 Tile tile = _tileGenerator.Board[i, j].Tile;
-                if (_checkedTiles.Contains(tile))
+                if (!_checkedTiles.Contains(tile))
+                {
+                    _checkedTiles.Add(tile);
+                }
+                if (_deletionGroup.Contains(tile))
                 {
                     continue;
                 }
-                _checkedTiles.Add(tile);
-                Debug.Log("i'm center " + tile.name);
-                RecursiveSearch(i, j, tile);
+                List<Tile> result = RecursiveSearch(i, j, tile);
+                _deletionGroup.AddRange(result);
             }
         }
+        _checkedTiles.RemoveAll(item => item == null);
     }
-    private void RecursiveSearch(int i, int j, Tile tile)
+
+
+    private List<Tile> RecursiveSearch(int i, int j, Tile tile)
     {
+        List<Tile> result = new List<Tile>();
         if (i + 1 < _tileGenerator.Board.GetLength(0))
         {
             Tile tilebelow = _tileGenerator.Board[i + 1, j].Tile;
-            if (!_checkedTiles.Contains(tilebelow))
-            {
-                _checkedTiles.Add(tilebelow);
-            }
             if (tile._color == tilebelow._color)
             {
-                if (!_deletionGroup.Contains(tilebelow))
+                if (i - 1 >= 0)
                 {
-                    _deletionGroup.Add(tilebelow);
+                    Tile tileabove = _tileGenerator.Board[i - 1, j].Tile;
+                    if (tile._color == tileabove._color)
+                    {
+                        result.Add(tilebelow);
+                        result.Add(tileabove);
+                    }
                 }
-                if (!_deletionGroup.Contains(tile))
-                {
-                    _deletionGroup.Add(tile);
-                }
-                Debug.Log("i'm down below " + tilebelow.name);
-            }
-        }
-        if (i - 1 >= 0)
-        {
-            Tile tileabove = _tileGenerator.Board[i - 1, j].Tile;
-            if (!_checkedTiles.Contains(tileabove))
-            {
-                _checkedTiles.Add(tileabove);
-            }
-            if (tile._color == tileabove._color)
-            {
-                if (!_deletionGroup.Contains(tileabove))
-                {
-                    _deletionGroup.Add(tileabove);
-                }
-                if (!_deletionGroup.Contains(tile))
-                {
-                    _deletionGroup.Add(tile);
-                }
-                Debug.Log("i'm above " + tileabove.name);
             }
         }
         if (j + 1 < _tileGenerator.Board.GetLength(1))
         {
             Tile tileright = _tileGenerator.Board[i, j + 1].Tile;
-            if (!_checkedTiles.Contains(tileright))
-            {
-                _checkedTiles.Add(tileright);
-            }
             if (tile._color == tileright._color)
             {
-                if (!_deletionGroup.Contains(tileright))
+                if (j - 1 >= 0)
                 {
-                    _deletionGroup.Add(tileright);
+                    Tile tileleft = _tileGenerator.Board[i, j - 1].Tile;
+                    if (tile._color == tileleft._color)
+                    {
+                        result.Add(tileright);
+                        result.Add(tileleft);
+                    }
                 }
-                if (!_deletionGroup.Contains(tile))
-                {
-                    _deletionGroup.Add(tile);
-                }
-                Debug.Log("i'm to the right " + tileright.name);
             }
         }
-        if (j - 1 >= 0)
+        if (result.Count > 0)
         {
-            Tile tileleft = _tileGenerator.Board[i, j - 1].Tile;
-            if (!_checkedTiles.Contains(tileleft))
-            {
-                _checkedTiles.Add(tileleft);
-            }
-            if (tile._color == tileleft._color)
-            {
-                if (!_deletionGroup.Contains(tileleft))
-                {
-                    _deletionGroup.Add(tileleft);
-                }
-                if (!_deletionGroup.Contains(tile))
-                {
-                    _deletionGroup.Add(tile);
-                }
-                Debug.Log("i'm to the left " + tileleft.name);
-            }
+            result.Add(tile);
         }
+        return result;
     }
 
     private void Delete(List<Tile> list)
     {
         foreach (var x in list)
         {
-            if (x.gameObject != null)
+            if (x != null)
             {
                 Destroy(x.gameObject);
             }
@@ -167,12 +130,21 @@ public class GameManager : MonoBehaviour
                 list.Remove(x);
             }
         }
-        list.Clear();
     }
 
     private IEnumerator WaitandSearch()
     {
         yield return new WaitForSeconds(5);
         SearchMethod();
+        yield return new WaitForSeconds(2);
+        StopCoroutine(WaitandSearch());
+    }
+
+    private IEnumerator WaitandDelete()
+    {
+        yield return new WaitForSeconds(5);
+        Delete(_deletionGroup);
+        yield return new WaitForSeconds(2);
+        StopCoroutine(WaitandDelete());
     }
 }
