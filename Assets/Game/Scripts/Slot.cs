@@ -4,12 +4,14 @@ public class Slot : MonoBehaviour
     public bool IsHasTile => Tile != null;
     public Tile Tile { get; private set; }
 
-    private void Update()
+    private void OnEnable()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            DeleteTile();
-        }
+        Actions.OnMouseDown += DeleteTile;
+    }
+
+    private void OnDisable()
+    {
+        Actions.OnMouseDown -= DeleteTile;
     }
 
     public void SetTile(Tile tile, float spawnNextAfterDelay)
@@ -23,7 +25,6 @@ public class Slot : MonoBehaviour
     {
         Tile = null;
     }
-
     public void DeleteTile()
     {
         Vector2 ray = Camera.main.ScreenToWorldPoint(Input.mousePosition);

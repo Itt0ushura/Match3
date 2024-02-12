@@ -19,6 +19,14 @@ public class GameManager : MonoBehaviour
         _tileGenerator.GenerateBoard();
     }
 
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            Actions.OnMouseDown();
+        }
+    }
+
     private void LateUpdate()
     {
         GridFill();
@@ -119,15 +127,16 @@ public class GameManager : MonoBehaviour
 
     private void Delete(List<Tile> list)
     {
-        foreach (var x in list)
+        list.Distinct();
+        for(int i = 0; i < list.Count; i++)
         {
-            if (x != null)
+            if (list[i] != null)
             {
-                Destroy(x.gameObject);
+                Destroy(list[i].gameObject);
             }
             else
             {
-                list.Remove(x);
+                list.Remove(list[i]);
             }
         }
     }
