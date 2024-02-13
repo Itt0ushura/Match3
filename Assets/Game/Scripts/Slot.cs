@@ -4,14 +4,9 @@ public class Slot : MonoBehaviour
     public bool IsHasTile => Tile != null;
     public Tile Tile { get; private set; }
 
-    private void OnEnable()
+    private void Awake()
     {
-        Actions.OnMouseDown += DeleteTile;
-    }
-
-    private void OnDisable()
-    {
-        Actions.OnMouseDown -= DeleteTile;
+        Actions.OnDelete.AddListener(DeleteTile);
     }
 
     public void SetTile(Tile tile, float spawnNextAfterDelay)

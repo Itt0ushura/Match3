@@ -23,14 +23,13 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Actions.OnMouseDown();
+            Actions.OnDelete.Invoke();
         }
     }
 
     private void LateUpdate()
     {
         GridFill();
-        StartCoroutine(WaitandSearch());
         StartCoroutine(WaitandDelete());
     }
 
@@ -46,7 +45,6 @@ public class GameManager : MonoBehaviour
                 if (slot.IsHasTile)
                 {
                     var tile = slot.Tile;
-
                     if (tile.IsCanMoveTo(slotbelow))
                     {
                         StartCoroutine(tile.MoveTileDown(slotbelow, animationTimer));
@@ -89,12 +87,12 @@ public class GameManager : MonoBehaviour
         if (i + 1 < _tileGenerator.Board.GetLength(0))
         {
             Tile tilebelow = _tileGenerator.Board[i + 1, j].Tile;
-            if (tile._color == tilebelow._color)
+            if (tile != null && tilebelow != null && tile._color == tilebelow._color)
             {
                 if (i - 1 >= 0)
                 {
                     Tile tileabove = _tileGenerator.Board[i - 1, j].Tile;
-                    if (tile._color == tileabove._color)
+                    if (tile != null && tileabove != null && tile._color == tileabove._color)
                     {
                         result.Add(tilebelow);
                         result.Add(tileabove);
@@ -105,12 +103,12 @@ public class GameManager : MonoBehaviour
         if (j + 1 < _tileGenerator.Board.GetLength(1))
         {
             Tile tileright = _tileGenerator.Board[i, j + 1].Tile;
-            if (tile._color == tileright._color)
+            if (tile != null && tileright != null && tile._color == tileright._color)
             {
                 if (j - 1 >= 0)
                 {
                     Tile tileleft = _tileGenerator.Board[i, j - 1].Tile;
-                    if (tile._color == tileleft._color)
+                    if (tile != null && tileleft != null && tile._color == tileleft._color)
                     {
                         result.Add(tileright);
                         result.Add(tileleft);
@@ -128,7 +126,7 @@ public class GameManager : MonoBehaviour
     private void Delete(List<Tile> list)
     {
         list.Distinct();
-        for(int i = 0; i < list.Count; i++)
+        for (int i = 0; i < list.Count; i++)
         {
             if (list[i] != null)
             {
@@ -141,16 +139,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private IEnumerator WaitandSearch()
+    private IEnumerator WaitandDelete()
     {
         yield return new WaitForSeconds(5);
         SearchMethod();
-        yield return new WaitForSeconds(2);
-        StopCoroutine(WaitandSearch());
-    }
-
-    private IEnumerator WaitandDelete()
-    {
         yield return new WaitForSeconds(5);
         Delete(_deletionGroup);
         yield return new WaitForSeconds(2);
