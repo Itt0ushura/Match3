@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static UnityEngine.Networking.UnityWebRequest;
 
 public class GameManager : MonoBehaviour
 {
@@ -13,24 +15,53 @@ public class GameManager : MonoBehaviour
     public List<Tile> _checkedTiles = new List<Tile>();
     public List<Tile> _combinedList = new List<Tile>();
 
+    private bool _isBoardGenerationProccessActive;
+
     private void Start()
     {
         _tileGenerator = GetComponent<TileGeneration>();
         _tileGenerator.GenerateBoard();
+        StartCoroutine(FillAllBoardRoutine(null));
     }
 
     private void Update()
     {
+        if (_isBoardGenerationProccessActive)
+            return;
+
         if (Input.GetMouseButtonDown(0))
         {
             Actions.OnDelete.Invoke();
+
+            StartCoroutine(FillAllBoardRoutine(SearchAndDelete));
         }
     }
 
-    private void LateUpdate()
+    private IEnumerator FillAllBoardRoutine(Action callback)
     {
-        GridFill();
-        StartCoroutine(WaitandDelete());
+        _isBoardGenerationProccessActive = true;
+
+        while (!IsAllSlotsHasTiles())
+        {
+            yield return new WaitForEndOfFrame();
+            GridFill();
+        }
+
+        _isBoardGenerationProccessActive = false;
+        callback?.Invoke();
+    }
+
+    private bool IsAllSlotsHasTiles()
+    {
+        foreach (var slot in _tileGenerator.Board) 
+        {
+            if (!slot.IsHasTile || slot.Tile.IsMoving)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private void GridFill()
@@ -73,79 +104,80 @@ public class GameManager : MonoBehaviour
                 {
                     continue;
                 }
-                List<Tile> result = RecursiveSearch(i, j, tile);
+                List<Tile> result = AbsolutelyNotRecursiveSearch(i, j, tile);
                 _deletionGroup.AddRange(result);
             }
         }
         _checkedTiles.RemoveAll(item => item == null);
     }
 
-
-    private List<Tile> RecursiveSearch(int i, int j, Tile tile)
+    private List<Tile> AbsolutelyNotRecursiveSearch(int i, int j, Tile tile)
     {
         List<Tile> result = new List<Tile>();
-        if (i + 1 < _tileGenerator.Board.GetLength(0))
+
+        if (tile == null)
+            return result;
+
+        var isHasSlotAboveAndBelow = IsHasOpositeSlots(i, 0);
+        var isHasSlotLeftAndRight = IsHasOpositeSlots(j, 1);
+
+        if (isHasSlotAboveAndBelow)
         {
-            Tile tilebelow = _tileGenerator.Board[i + 1, j].Tile;
-            if (tile != null && tilebelow != null && tile._color == tilebelow._color)
+            if (TryGetTileWithColorMatch(i + 1, j, tile._color, out var tileBelow))
             {
-                if (i - 1 >= 0)
+                if (TryGetTileWithColorMatch(i - 1, j, tile._color, out var tileAbove))
                 {
-                    Tile tileabove = _tileGenerator.Board[i - 1, j].Tile;
-                    if (tile != null && tileabove != null && tile._color == tileabove._color)
-                    {
-                        result.Add(tilebelow);
-                        result.Add(tileabove);
-                    }
+                    result.Add(tileBelow);
+                    result.Add(tileAbove);
                 }
             }
         }
-        if (j + 1 < _tileGenerator.Board.GetLength(1))
+        if (isHasSlotLeftAndRight)
         {
-            Tile tileright = _tileGenerator.Board[i, j + 1].Tile;
-            if (tile != null && tileright != null && tile._color == tileright._color)
+            if (TryGetTileWithColorMatch(i, j + 1, tile._color, out var tileRight))
             {
-                if (j - 1 >= 0)
+                if (TryGetTileWithColorMatch(i, j - 1, tile._color, out var tileLeft))
                 {
-                    Tile tileleft = _tileGenerator.Board[i, j - 1].Tile;
-                    if (tile != null && tileleft != null && tile._color == tileleft._color)
-                    {
-                        result.Add(tileright);
-                        result.Add(tileleft);
-                    }
+                    result.Add(tileRight);
+                    result.Add(tileLeft);
                 }
             }
         }
+
         if (result.Count > 0)
-        {
             result.Add(tile);
-        }
+
         return result;
+    }
+
+    private bool TryGetTileWithColorMatch(int i, int j, Tile.TileColor color, out Tile tile)
+    {
+        return TryGetTile(i, j, out tile) && tile._color == color;
+    }
+    private bool TryGetTile(int i, int j, out Tile tile)
+    {
+        tile = _tileGenerator.Board[i, j].Tile;
+        return tile != null;
+    }
+    private bool IsHasOpositeSlots(int elementIndex, int dimensionIndex)
+    {
+        return elementIndex - 1 >= 0 && elementIndex + 1 < _tileGenerator.Board.GetLength(dimensionIndex);
     }
 
     private void Delete(List<Tile> list)
     {
         list.Distinct();
+
         for (int i = 0; i < list.Count; i++)
         {
             if (list[i] != null)
-            {
                 Destroy(list[i].gameObject);
-            }
-            else
-            {
-                list.Remove(list[i]);
-            }
         }
     }
 
-    private IEnumerator WaitandDelete()
+    private void SearchAndDelete()
     {
-        yield return new WaitForSeconds(5);
         SearchMethod();
-        yield return new WaitForSeconds(5);
         Delete(_deletionGroup);
-        yield return new WaitForSeconds(2);
-        StopCoroutine(WaitandDelete());
     }
 }

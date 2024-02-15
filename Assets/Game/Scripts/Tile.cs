@@ -2,9 +2,10 @@ using System.Collections;
 using UnityEngine;
 
 public class Tile : MonoBehaviour
-{   
+{
+    public bool IsMoving { get; private set; }
+
     private Slot _currentSlot;
-    private bool _isMoving;
     private float _spawnNextDelay;
     [SerializeField] public TileColor _color;
 
@@ -22,11 +23,11 @@ public class Tile : MonoBehaviour
         this._currentSlot = slot;
         _spawnNextDelay = spawnNextAfterDelay;
     }
-    public bool IsCanMoveTo(Slot slot) => !_isMoving && !slot.IsHasTile;
+    public bool IsCanMoveTo(Slot slot) => !IsMoving && !slot.IsHasTile;
 
     public IEnumerator MoveTileDown(Slot targetSlot, float duration)
     {
-        _isMoving = true;
+        IsMoving = true;
 
         float elapsedTime = 0f;
 
@@ -62,7 +63,7 @@ public class Tile : MonoBehaviour
 
         this.transform.position = targetSlot.transform.position;
 
-        _isMoving = false;
+        IsMoving = false;
 
         yield break;
     }
