@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static UnityEngine.Networking.UnityWebRequest;
 
 public class GameManager : MonoBehaviour
 {
@@ -13,7 +12,6 @@ public class GameManager : MonoBehaviour
 
     public List<Tile> _deletionGroup = new List<Tile>();
     public List<Tile> _checkedTiles = new List<Tile>();
-    public List<Tile> _combinedList = new List<Tile>();
 
     private bool _isBoardGenerationProccessActive;
 
@@ -28,12 +26,22 @@ public class GameManager : MonoBehaviour
     {
         if (_isBoardGenerationProccessActive)
             return;
-
+        StartCoroutine(CheckLoop(FillAllBoardRoutine(SearchAndDelete)));
         if (Input.GetMouseButtonDown(0))
         {
             Actions.OnDelete.Invoke();
 
             StartCoroutine(FillAllBoardRoutine(SearchAndDelete));
+        }
+    }
+
+    private IEnumerator CheckLoop(IEnumerator coroutine)
+    {
+        StartCoroutine(coroutine);
+        if (IsAllSlotsHasTiles())
+        {
+            yield return new WaitForEndOfFrame();
+            StopCoroutine(coroutine);
         }
     }
 
@@ -53,7 +61,7 @@ public class GameManager : MonoBehaviour
 
     private bool IsAllSlotsHasTiles()
     {
-        foreach (var slot in _tileGenerator.Board) 
+        foreach (var slot in _tileGenerator.Board)
         {
             if (!slot.IsHasTile || slot.Tile.IsMoving)
             {
@@ -86,7 +94,6 @@ public class GameManager : MonoBehaviour
         _tileGenerator.GenerateTile();
     }
 
-    //search realization
 
     private void SearchMethod()
     {
@@ -173,6 +180,7 @@ public class GameManager : MonoBehaviour
             if (list[i] != null)
                 Destroy(list[i].gameObject);
         }
+        list.Clear();
     }
 
     private void SearchAndDelete()
